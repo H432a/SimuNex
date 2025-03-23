@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Wokwi Circuit Builder with AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: url("{{ url_for('static', filename='bg.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: "PT Sans Narrow", serif;
+            font-weight: 400;
+            color: white;
+        }
+
+        iframe {
+            width: 70%;
+            height: 90vh;
+            border: none;
+            float: left;
+        }
+
+        #chatbot-container {
+            width: 28%;
+            float: right;
+            padding: 10px;
+            border-left: 2px solid #4CAF50;
+            /* Green left border */
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.7);
+            /* Dark transparent background */
+            color: white;
+            /* White text */
+            border-radius: 10px;
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 8px;
+            margin-bottom: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            /* Slightly transparent */
+        }
+
+        #chat-input {
+            width: calc(100% - 80px);
+            padding: 6px;
+            margin-right: 5px;
+        }
+
+        button {
+            padding: 7px 10px;
+            cursor: pointer;
+        }
+
+        #chatbot-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <iframe src="https://wokwi.com/projects/new" title="Circuit Builder"></iframe>
+
+    <div id="chatbot-container">
+        <div id="chatbot-header">🤖 AI Assistant</div>
+        <div id="chat-messages"></div>
+        <div style="display: flex;">
+            <input type="text" id="chat-input" placeholder="Ask connection/coding queries..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <button onclick="downloadChatAsPDF()">Download Chat as PDF</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+
+</html>

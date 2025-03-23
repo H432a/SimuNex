@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Projects Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to SNUC DDLab Projects Hub</h1>
+        <p>Explore hands-on experiments and simulations to learn Arduino programming.</p>
+        
+        <h2>Available Projects</h2>
+        <ul id="project-list">
+            <!-- Projects will be dynamically loaded here -->
+        </ul>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/lab.js') }}"></script>
+</body>
+</html>

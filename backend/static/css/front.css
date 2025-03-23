@@ -1,0 +1,176 @@
+/* 🌟 Learning-themed Background */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: url("/static/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "PT Sans Narrow", serif;
+    font-weight: 400;
+    font-style: normal;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 🎨 Background Image with Opacity */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/bg.jpg") no-repeat center center/cover;
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* ✨ Floating Glass Effect */
+.home-container {
+    text-align: center;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+    width: 80%;
+    max-width: 600px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Glassmorphism Header */
+.glass-header {
+    width: 90%;
+    max-width: 1200px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    color: rgb(255, 255, 255);
+    margin: 20px 0;
+}
+
+/* Site Title */
+.site-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 5px black;
+}
+
+/* Navigation Links Centered */
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.nav-link {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+    color: #ffcc00;
+}
+
+/* 🎈 Floating Animation */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.home-container:hover {
+    animation: float 3s infinite ease-in-out;
+}
+
+/* 📌 Button Styling */
+.button-container {
+    margin-top: 20px;
+}
+
+button {
+    background: linear-gradient(45deg, #4CAF50, #2E7D32);
+    color: white;
+    padding: 15px 20px;
+    margin: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+/* 🚀 Hover Effect */
+button:hover {
+    background: linear-gradient(45deg, #45a049, #1B5E20);
+    transform: scale(1.05);
+}
+
+/* Floating Background Shapes */
+@keyframes floatingShapes {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(10deg);
+    }
+
+    100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+}
+
+.bg-shape {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    animation: floatingShapes 6s infinite ease-in-out;
+}
+
+.bg-shape:nth-child(1) {
+    top: 10%;
+    left: 10%;
+}
+
+.bg-shape:nth-child(2) {
+    top: 50%;
+    right: 10%;
+    animation-delay: 2s;
+}
+
+.bg-shape:nth-child(3) {
+    bottom: 10%;
+    left: 30%;
+    animation-delay: 4s;
+}
+
+footer {
+    position: relative;
+}

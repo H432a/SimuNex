@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware-IO - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/challenge.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dark-mode">
+    <header>
+        <h1>Hardware-IO Problems</h1>
+        <button id="themeToggle" class="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+    <main>
+        <div class="problems-grid">
+            <!-- Problem 1 -->
+            <a href="{{ url_for('problem', problem_id=1) }}" class="problem-card">
+                <div class="problem-title">1. Blink an LED</div>
+                <div class="problem-stats">55.2% Success Rate</div>
+                <div class="problem-difficulty easy">Easy</div>
+            </a>
+            <!-- Problem 2 -->
+            <a href="{{ url_for('problem', problem_id=2) }}" class="problem-card">
+                <div class="problem-title">2. Traffic Light System</div>
+                <div class="problem-stats">45.6% Success Rate</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </a>
+            <!-- Problem 3 -->
+            <a href="{{ url_for('problem', problem_id=3) }}" class="problem-card">
+                <div class="problem-title">3. Temperature Sensor</div>
+                <div class="problem-stats">36.4% Success Rate</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </a>
+            <!-- Problem 4 -->
+            <a href="{{ url_for('problem', problem_id=4) }}" class="problem-card">
+                <div class="problem-title">4. Servo Motor Control</div>
+                <div class="problem-stats">43.1% Success Rate</div>
+                <div class="problem-difficulty hard">Hard</div>
+            </a>
+            <!-- Problem 5 -->
+            <a href="{{ url_for('problem', problem_id=5) }}" class="problem-card">
+                <div class="problem-title">5. Ultrasonic Distance Sensor</div>
+                <div class="problem-stats">35.4% Success Rate</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </a>
+            <!-- Problem 6 -->
+            <a href="{{ url_for('problem', problem_id=6) }}" class="problem-card">
+                <div class="problem-title">6. Push Button LED Control</div>
+                <div class="problem-stats">50.9% Success Rate</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </a>
+            <!-- Problem 7 -->
+            <a href="{{ url_for('problem', problem_id=7) }}" class="problem-card">
+                <div class="problem-title">7. RGB LED Control</div>
+                <div class="problem-stats">29.9% Success Rate</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </a>
+            <!-- Problem 8 -->
+            <a href="{{ url_for('problem', problem_id=8) }}" class="problem-card">
+                <div class="problem-title">8. LCD Display</div>
+                <div class="problem-stats">18.8% Success Rate</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </a>
+            <!-- Problem 9 -->
+            <a href="{{ url_for('problem', problem_id=9) }}" class="problem-card">
+                <div class="problem-title">9. Stepper Motor Control</div>
+                <div class="problem-stats">58.8% Success Rate</div>
+                <div class="problem-difficulty easy">Easy</div>
+            </a>
+            <!-- Problem 10 -->
+            <a href="{{ url_for('problem', problem_id=10) }}" class="problem-card">
+                <div class="problem-title">10. IR Remote Control</div>
+                <div class="problem-stats">40.0% Success Rate</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </a>
+            <!-- Coming Soon 1 -->
+            <div class="problem-card coming-soon">
+                <div class="problem-title">Coming Soon</div>
+                <div class="problem-stats">Stay tuned!</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </div>
+            <!-- Coming Soon 2 -->
+            <div class="problem-card coming-soon">
+                <div class="problem-title">Coming Soon</div>
+                <div class="problem-stats">Stay tuned!</div>
+                <div class="problem-difficulty medium">Medium</div>
+            </div>
+        </div>
+    </main>
+    <script src="{{ url_for('static', filename='js/challenge.js') }}"></script>
+</body>
+</html>

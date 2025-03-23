@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem 5 - Temperature Sensor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/problem.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Problem 5: Temperature Sensor</h1>
+        <button id="themeToggle" class="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+    <main>
+        <div class="problem-container">
+            <!-- Left Side: Problem Statement and Components -->
+            <div class="problem-statement">
+                <h2>Problem Statement</h2>
+                <p>Read temperature data from a sensor and display it on the Serial Monitor.</p>
+                <h3>Components Required</h3>
+                <ul>
+                    <li>Arduino Uno</li>
+                    <li>Temperature Sensor (LM35)</li>
+                </ul>
+                <!-- Timer Section -->
+                <div class="timer-container">
+                    <div class="timer-input">
+                        <label for="timeInput">Set Timer (minutes):</label>
+                        <input type="number" id="timeInput" min="1" value="10">
+                    </div>
+                    <br>
+                    <div id="timer">Time Left: <span id="time">10:00</span></div>
+                    <br>
+                    <div class="timer-buttons">
+                        <button onclick="startTimer()">Start Timer</button>
+                        <button onclick="pauseTimer()">Pause Timer</button>
+                        <button onclick="stopTimer()">Stop Timer</button>
+                    </div>
+                    <br>
+                    <!-- Live Clock -->
+                    <div class="live-clock">
+                        <span id="clock">00:00</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Side: Wokwi Simulator -->
+            <div class="simulator">
+                <h2>Wokwi Simulator</h2>
+                <iframe
+                    src="https://wokwi.com/projects/new/arduino-uno"
+                    width="100%"
+                    height="500px"
+                    style="border: 1px solid #ccc;"
+                ></iframe>
+            </div>
+        </div>
+        <!-- Code Editor and Evaluation -->
+        <div class="code-editor">
+            <h2>Code Editor</h2>
+            <textarea id="codeInput" placeholder="Write your code here..."></textarea>
+            <button onclick="validateCode()">Submit Code</button>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="{{ url_for('static', filename='js/challenge.js') }}"></script>
+</body>
+</html>

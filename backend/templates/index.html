@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wokwi Simulator with AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>🔎 Build & Simulate Circuits with AI Help</h1>
+    
+    <!-- Embed Wokwi -->
+    <iframe 
+        src="https://wokwi.com/projects/new" 
+        width="100%" 
+        height="600px" 
+        frameborder="0">
+    </iframe>
+
+    <!-- Chatbot container -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">AI Assistant 💡</div>
+        <div id="chat-messages"></div>
+        <input type="text" id="chat-input" placeholder="Ask me anything about your circuit..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>

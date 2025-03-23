@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="page-container">
+        <!-- Header Section -->
+        <header class="glass-header">
+            <h1 class="site-title">Learning Engagement Platform</h1>
+            <nav class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="{{ url_for('about') }}" class="nav-link">About</a>
+            </nav>
+        </header>
+
+        <!-- Main content -->
+        <div class="home-container">
+            <h1 class="title">About Us</h1>
+            <p class="subtitle">Welcome to the Learning Engagement Platform. Here, you can build projects, learn new skills, and explore various challenges to enhance your learning experience.</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2025 Learning Engagement Platform. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

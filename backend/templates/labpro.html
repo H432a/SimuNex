@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Experiments</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lab.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Experiment content will be dynamically inserted here -->
+    </div>
+
+    <div class="chat-container">
+        <h2>🔧 Wokwi Chat Assistant</h2>
+        <div id="chatbox">
+            <div class="bot-message">Hello! Ask me anything about your Wokwi experiments. 💡</div>
+        </div>
+        <input type="text" id="user-input" placeholder="Type your question here..." />
+        <button onclick="sendMessage()">Ask</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Get project ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get("id");
+
+            // Define content for each project
+            const projects = {
+                "1": {
+                    title: "Arduino LED Blinking Experiment",
+                    theory: `
+                        <p>This experiment demonstrates how to control an LED using an Arduino board.</p>
+                        <p>The <strong>LED_BUILTIN</strong> refers to the onboard LED, typically on <strong>pin 13</strong>.</p>`,
+                    working: `
+                        <ul>
+                            <li>Setup pin 13 as output using <code>pinMode()</code>.</li>
+                            <li>Loop function turns LED on and off.</li>
+                        </ul>`,
+                    code: `
+                        <pre>
+void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+}
+void loop() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(1000);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(1000);
+}
+                        </pre>`,
+                    applications: `
+                        <p>Used in traffic signals, indicator lights, and microcontroller basics.</p>`,
+                },
+                "2": {
+                    title: "Arduino Servo Motor Testing Experiment",
+                    theory: `
+                        <p>This experiment demonstrates how to control a <strong>servo motor</strong> using an Arduino board.</p>`,
+                    working: `
+                        <ul>
+                            <li>Attach servo to pin 9.</li>
+                            <li>Move to angles: 0°, 90°, 180° with delays.</li>
+                        </ul>`,
+                    code: `
+                        <pre>
+#include &lt;Servo.h&gt;
+Servo myServo;
+void setup() {
+    myServo.attach(9);
+}
+void loop() {
+    myServo.write(0);
+    delay(1000);
+    myServo.write(90);
+    delay(1000);
+    myServo.write(180);
+    delay(1000);
+}
+                        </pre>`,
+                    applications: `
+                        <p>Used in robotic arms, drones, and automated doors.</p>`,
+                }
+            };
+
+            // Select container
+            const container = document.querySelector(".container");
+
+            if (projects[projectId]) {
+                container.innerHTML = `
+                    <h1>${projects[projectId].title}</h1>
+                    
+                    <h2>Live Simulation</h2>
+                    <iframe id="wokwi-frame" frameborder="0"></iframe>
+                    <button id="loadProject">Load Wokwi Project</button>
+
+                    <h2>Theory</h2>
+                    ${projects[projectId].theory}
+
+                    <h3>Working Principle</h3>
+                    ${projects[projectId].working}
+
+                    <div class="code-explanation">
+                        <h3>Code Explanation</h3>
+                        ${projects[projectId].code}
+                    </div>
+
+                    <h3>Applications</h3>
+                    ${projects[projectId].applications}
+                `;
+            } else {
+                container.innerHTML = "<h1>Project Not Found</h1>";
+            }
+        });
+
+        // Chatbox functionality
+        function sendMessage() {
+            const userInput = document.getElementById("user-input").value.trim();
+            const chatbox = document.getElementById("chatbox");
+
+            if (userInput !== "") {
+                // Add user message
+                const userMessage = document.createElement("div");
+                userMessage.classList.add("user-message");
+                userMessage.innerText = userInput;
+                chatbox.appendChild(userMessage);
+
+                // Bot response
+                const botMessage = document.createElement("div");
+                botMessage.classList.add("bot-message");
+
+                // Simple responses
+                if (userInput.toLowerCase().includes("led")) {
+                    botMessage.innerText = "The LED Blinking experiment shows how to control an LED using an Arduino!";
+                } else if (userInput.toLowerCase().includes("servo")) {
+                    botMessage.innerText =
+                        "The Servo Motor experiment demonstrates how to rotate a servo to different angles using an Arduino!";
+                } else {
+                    botMessage.innerText =
+                        "I'm here to help with your Wokwi experiments! Ask about LEDs, servos, or Arduino basics.";
+                }
+
+                chatbox.appendChild(botMessage);
+                document.getElementById("user-input").value = "";
+
+                // Auto-scroll chatbox
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+        }
+    </script>
+    <script src="{{ url_for('static', filename='js/labpro.js') }}"></script>
+</body>
+
+</html>

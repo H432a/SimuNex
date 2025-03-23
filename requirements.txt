@@ -1,0 +1,7 @@
+Flask
+ultralytics
+opencv-python
+matplotlib
+numpy
+langchain
+langchain_groq

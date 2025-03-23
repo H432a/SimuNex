@@ -1,0 +1,187 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #f7f7f7;
+    color: #333;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background: url('bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    opacity: 0.95;
+    background-color: #1e1e1e;
+    color: #f7f7f7;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #8fbb8f;
+    color: rgb(0, 0, 0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+/* Dark Mode Toggle Button */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+.theme-toggle i {
+    color: #000000;
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+body.dark-mode .theme-toggle {
+    background-color: #333333;
+}
+
+body.dark-mode .theme-toggle i {
+    color: #ffffff;
+}
+
+/* Problem Container */
+.problem-container {
+    display: flex;
+    margin: 20px;
+    gap: 20px;
+}
+
+.problem-statement,
+.simulator {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .problem-statement,
+body.dark-mode .simulator {
+    background-color: #2d2d2d;
+}
+
+.problem-statement h2,
+.simulator h2 {
+    margin-top: 0;
+}
+
+/* Timer Section */
+.timer-container {
+    margin-top: 20px;
+}
+
+.timer-container label {
+    font-weight: bold;
+}
+
+.timer-container input {
+    padding: 5px;
+    margin: 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.timer-container button {
+    padding: 5px 10px;
+    background-color: #1b882d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.timer-container button:hover {
+    background-color: #6ecf7e;
+}
+
+#timer {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Live Clock */
+.live-clock {
+    margin-top: 10px;
+    font-size: 4em;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Code Editor */
+.code-editor {
+    margin: 20px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .code-editor {
+    background-color: #2d2d2d;
+}
+
+.code-editor h2 {
+    margin-top: 0;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    margin-top: 10px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 1em;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    color: #000000;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode textarea {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-color: #444;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #1b882d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #6ecf7e;
+}
