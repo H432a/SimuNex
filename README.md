@@ -28,6 +28,7 @@ Ensure you have the following installed:
    ```sh
    git clone https://github.com/Harinee2501/SimuNex.git
    cd SimuNex
+   cd backend
    ```
 2. Install dependencies:
    ```sh
