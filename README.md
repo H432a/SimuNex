@@ -9,7 +9,7 @@ SimuNex is an AI-driven IoT simulation platform that helps users identify compon
 - **HardCode - IoT Coding Platform**: Allows users to simulate hardware connections, write code, and test solutions.
 
 ## Tech Stack
-- **Frontend**: HTML, CSS, JavaScript
+- **Frontend**: HTML, CSS, JavaScript.
 - **Backend**: Flask
 - **Machine Learning**: YOLOv8, Llama3-70B
 - **Database**: SQLite3
