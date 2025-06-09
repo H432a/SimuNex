@@ -15,7 +15,7 @@ app = Flask(
     template_folder="templates"          # Keeping templates in backend/templates
 )
 
-CORS(app)
+CORS(app, origins=["https://simunex.netlify.app"])
 
 # Load Groq API key
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
