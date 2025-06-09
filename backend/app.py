@@ -5,28 +5,37 @@ from ultralytics import YOLO
 from dotenv import load_dotenv
 import os
 
-
+# Load environment variables
 load_dotenv()
 
-app = Flask(__name__)
+# Initialize Flask app with correct static folder
+app = Flask(
+    __name__,
+    static_folder="../frontend/static",  # Pointing to frontend static assets
+    template_folder="templates"          # Keeping templates in backend/templates
+)
+
 CORS(app)
 
-
+# Load Groq API key
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise ValueError("ERROR: Missing GROQ_API_KEY.")
 
+# Initialize Groq LLM
 llm = ChatGroq(
     temperature=0,
     groq_api_key=GROQ_API_KEY,
     model="llama3-70b-8192"
 )
 
+# Load YOLO model
 model = YOLO('model/best.pt')
 
+# Routes
 @app.route('/')
 def home():
-    return render_template('front.html')  
+    return render_template('front.html')
 
 @app.route('/problem<int:problem_id>')
 def problem(problem_id):
@@ -38,11 +47,11 @@ def labpro():
 
 @app.route('/upload')
 def upload_page():
-    return render_template('upload.html') 
+    return render_template('upload.html')
 
 @app.route('/lab')
 def lab():
-    return render_template('lab.html')  
+    return render_template('lab.html')
 
 @app.route('/detect', methods=['POST'])
 def detect_components():
