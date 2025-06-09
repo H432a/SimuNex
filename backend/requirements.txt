@@ -6,3 +6,4 @@ numpy
 langchain
 langchain_groq
 python-dotenv
+gunicorn
