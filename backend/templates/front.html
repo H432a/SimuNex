@@ -1,48 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimuNex</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/front.css') }}">
-    <style>
-        body {
-            background: url("{{ url_for('static', filename='bg.jpg') }}") no-repeat center center fixed;
-            background-size: cover;
-        }
-    </style>
+    <title>Wokwi Simulator with AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
-    <div class="page-container">
-        <!-- Header Section -->
-        <header class="glass-header">
-            <h1 class="site-title">SimuNex- Your AI-Powered IoT Simulation Platform</h1>
-            <nav class="nav-links">
-                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-                <a href="{{ url_for('about') }}" class="nav-link">About</a>
-            </nav>
-        </header>
+    <h1>🔎 Build & Simulate Circuits with AI Help</h1>
+    
+    <!-- Embed Wokwi -->
+    <iframe 
+        src="https://wokwi.com/projects/new" 
+        width="100%" 
+        height="600px" 
+        frameborder="0">
+    </iframe>
 
-        <!-- Main content -->
-        <div class="home-container">
-            <h1 class="title">Welcome to the Learning Engagement Platform</h1>
-            <p class="subtitle">Select an option below to get started:</p>
-
-            <div class="button-container">
-                <!-- Updated button for "Build Project" -->
-                <a href="{{ url_for('upload_page') }}"><button>Build Project</button></a> 
-                <a href="{{ url_for('challenge') }}"><button>Hardware Challenges</button></a>
-                <a href="{{ url_for('lab') }}"><button>Lab Exam Prep</button></a>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <p>© 2025 Learning Engagement Platform. All rights reserved.</p>
-        </footer>
+    <!-- Chatbot container -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">AI Assistant 💡</div>
+        <div id="chat-messages"></div>
+        <input type="text" id="chat-input" placeholder="Ask me anything about your circuit..." />
+        <button onclick="sendMessage()">Send</button>
     </div>
-</body>
 
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
 </html>

@@ -35,7 +35,7 @@ model = YOLO('model/best.pt')
 # Routes
 @app.route('/')
 def home():
-    return render_template('front.html')
+    return render_template('index.html')
 
 @app.route('/problem<int:problem_id>')
 def problem(problem_id):
