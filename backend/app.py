@@ -3,8 +3,10 @@ from langchain_groq import ChatGroq
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
+import logging
 
-# Load environment variables
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 load_dotenv()
 
 app = Flask(
@@ -20,12 +22,16 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise ValueError("ERROR: Missing GROQ_API_KEY.")
 
-# Initialize Groq LLM
-llm = ChatGroq(
-    temperature=0,
-    groq_api_key=GROQ_API_KEY,
-    model="llama3-70b-8192"
-)
+llm=None
+def get_llm():
+    global llm
+    if llm is None:
+        llm = ChatGroq(
+            temperature=0,
+            groq_api_key=GROQ_API_KEY,
+            model="llama3-70b-8192"
+        )
+    return llm
 
 # Import the detection function (new file)
 from yolov8_detect import detect_objects
@@ -52,30 +58,39 @@ def lab():
 
 @app.route('/detect', methods=['POST'])
 def detect_components():
-    image = request.files.get('image')
-    if not image:
+    if 'image' not in request.files:
         return "No image uploaded", 400
-
+    
+    image = request.files['image']
     upload_folder = 'uploads'
     os.makedirs(upload_folder, exist_ok=True)
     image_path = os.path.join(upload_folder, image.filename)
-    image.save(image_path)
-
+    
     try:
+        image.save(image_path)
+        logger.info(f"Image saved to {image_path}")
+        
         detected_components = detect_objects(image_path)
-        print(f"[DEBUG] Components detected: {detected_components}")
+        logger.info(f"Components detected: {detected_components}")
 
         if not detected_components:
             detected_components = ['No components detected']
-            suggestions = "Could not detect components in the image. Please try uploading a clearer image."
+            suggestions = "Could not detect components. Please try a clearer image."
         else:
             prompt = f"Suggest simple IoT projects using: {', '.join(detected_components)}"
-            suggestions = llm.invoke(prompt).content
+            suggestions = get_llm().invoke(prompt).content
 
-        return render_template('result.html', components=detected_components, suggestions=suggestions)
+        # Clean up the uploaded file after processing
+        if os.path.exists(image_path):
+            os.remove(image_path)
+            
+        return render_template('result.html', 
+                             components=detected_components, 
+                             suggestions=suggestions)
 
     except Exception as e:
-        return f"An error occurred during detection: {e}", 500
+        logger.error(f"Detection error: {str(e)}", exc_info=True)
+        return f"An error occurred: {str(e)}", 500
 
 @app.route('/wokwi')
 def wokwi_page():
