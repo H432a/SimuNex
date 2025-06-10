@@ -1,18 +1,16 @@
 from flask import Flask, request, jsonify, render_template
 from langchain_groq import ChatGroq
 from flask_cors import CORS
-from ultralytics import YOLO
 from dotenv import load_dotenv
 import os
 
 # Load environment variables
 load_dotenv()
 
-# Initialize Flask app with correct static folder
 app = Flask(
     __name__,
-    static_folder="../frontend/static",  # Pointing to frontend static assets
-    template_folder="templates"          # Keeping templates in backend/templates
+    static_folder="../frontend/static",
+    template_folder="templates"
 )
 
 CORS(app, origins=["https://simunex.netlify.app"])
@@ -29,10 +27,6 @@ llm = ChatGroq(
     model="llama3-70b-8192"
 )
 
-# Load YOLO model
-model = YOLO('model/best.pt')
-
-# Routes
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -55,6 +49,9 @@ def lab():
 
 @app.route('/detect', methods=['POST'])
 def detect_components():
+    from ultralytics import YOLO  # import inside route
+    model = YOLO('model/best.pt')  # lazy-load model here
+
     image = request.files.get('image')
     if not image:
         return "No image uploaded", 400
@@ -99,20 +96,10 @@ def ask_llm():
         data = request.json
         prompt = data.get('prompt', '').strip()
         if not prompt:
-            return jsonify({'error': '⚠️ Please enter a valid question.'}), 400
-        response = llm.invoke(prompt)
-        return jsonify({'reply': response.content})
+            return jsonify({'error': 'Prompt cannot be empty'}), 400
+
+        response = llm.invoke(prompt).content
+        return jsonify({'response': response})
+
     except Exception as e:
-        return jsonify({'error': f'Something went wrong: {str(e)}'}), 500
-
-@app.route('/about')
-def about():
-    return render_template('about.html')
-
-@app.route('/challenge')
-def challenge():
-    return render_template('challenge.html')
-
-
-if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+        return jsonify({'error': str(e)}), 500
