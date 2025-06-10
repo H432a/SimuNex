@@ -96,6 +96,10 @@ def detect_components():
 def wokwi_page():
     return render_template('wokwi.html')
 
+@app.route('/challenge')
+def challenge():
+    return render_template('challenge.html')
+
 @app.route('/ask_llm', methods=['POST'])
 def ask_llm():
     try:
