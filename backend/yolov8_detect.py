@@ -11,6 +11,7 @@ def detect_objects(image_path):
     if image is None:
         print(f"Error: Unable to read image at {image_path}")
         return []
+    image = cv2.resize(image, (640, 480))
 
     results = model(image)  # Alternative to model.predict(source=image)
 

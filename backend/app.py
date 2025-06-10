@@ -27,6 +27,9 @@ llm = ChatGroq(
     model="llama3-70b-8192"
 )
 
+# Import the detection function (new file)
+from yolov8_detect import detect_objects
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -49,9 +52,6 @@ def lab():
 
 @app.route('/detect', methods=['POST'])
 def detect_components():
-    from ultralytics import YOLO  # import inside route
-    model = YOLO('model/best.pt')  # lazy-load model here
-
     image = request.files.get('image')
     if not image:
         return "No image uploaded", 400
@@ -62,16 +62,7 @@ def detect_components():
     image.save(image_path)
 
     try:
-        results = model(image_path, conf=0.4)
-
-        detected_components = set()
-        for result in results:
-            for box in result.boxes:
-                class_id = int(box.cls[0])
-                component_name = model.names[class_id]
-                detected_components.add(component_name)
-
-        detected_components = list(detected_components)
+        detected_components = detect_objects(image_path)
         print(f"[DEBUG] Components detected: {detected_components}")
 
         if not detected_components:
