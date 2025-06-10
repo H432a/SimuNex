@@ -56,41 +56,55 @@ def upload_page():
 def lab():
     return render_template('lab.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/detect', methods=['POST'])
 def detect_components():
     if 'image' not in request.files:
         return "No image uploaded", 400
-    
+
     image = request.files['image']
     upload_folder = 'uploads'
     os.makedirs(upload_folder, exist_ok=True)
     image_path = os.path.join(upload_folder, image.filename)
-    
+
     try:
+        import psutil
+        if psutil.virtual_memory().available < 200 * 1024 * 1024:  # 200MB
+            return "Server memory overloaded", 503
+
         image.save(image_path)
         logger.info(f"Image saved to {image_path}")
-        
+
         detected_components = detect_objects(image_path)
         logger.info(f"Components detected: {detected_components}")
 
+        # Handle no detection
         if not detected_components:
-            detected_components = ['No components detected']
             suggestions = "Could not detect components. Please try a clearer image."
-        else:
-            prompt = f"Suggest simple IoT projects using: {', '.join(detected_components)}"
-            suggestions = get_llm().invoke(prompt).content
+            os.remove(image_path)
+            return jsonify({"error": "No components detected", "suggestions": suggestions}), 400
 
-        # Clean up the uploaded file after processing
+        # Generate suggestions from LLM
+        prompt = f"Suggest simple IoT projects using: {', '.join(detected_components)}"
+        suggestions = get_llm().invoke(prompt).content
+
         if os.path.exists(image_path):
             os.remove(image_path)
-            
+
         return render_template('result.html', 
-                             components=detected_components, 
-                             suggestions=suggestions)
+                               components=detected_components, 
+                               suggestions=suggestions)
+
+    except MemoryError:
+        return "Memory error - try a smaller image", 413
 
     except Exception as e:
         logger.error(f"Detection error: {str(e)}", exc_info=True)
         return f"An error occurred: {str(e)}", 500
+
 
 @app.route('/wokwi')
 def wokwi_page():

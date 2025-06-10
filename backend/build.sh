@@ -17,6 +17,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 fi
 
 # Python environment setup
+# Add these lines before pip install
+export PYTORCH_NO_CUDA_MEMORY_CACHING=1
+export TF_CPP_MIN_LOG_LEVEL=3
 echo "Setting up Python environment..."
 python -m pip install --upgrade pip
 python -m pip install --no-cache-dir -r requirements.txt
