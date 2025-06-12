@@ -1,8 +1,13 @@
 from langchain_groq import ChatGroq
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  
+
 
 llm = ChatGroq(
     temperature=0,
-    groq_api_key="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",  # Replace this
+    groq_api_key = os.getenv("GROQ_API_KEY"),  # Replace this
     model="llama3-70b-8192"  # or whatever latest variant name they use in prod
 )
 
