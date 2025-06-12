@@ -1,105 +1,68 @@
 from ultralytics import YOLO
 import cv2
+import numpy as np
+import psutil
 import logging
-import os
-import gc
-import warnings
-import torch
-from typing import List, Optional
-
-# Hard-disable GPU and optimize memory usage
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-os.environ['PYTORCH_NO_CUDA_MEMORY_CACHING'] = '1'
-torch.backends.quantized.engine = 'qnnpack'  # Use quantized backend
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Suppress non-critical warnings
-warnings.filterwarnings('ignore', category=UserWarning)
-warnings.filterwarnings('ignore', category=FutureWarning)
+model = YOLO('model/best.pt')
 
-_model = None
+def preprocess_image(image, target_size=640):
+    """Smart preprocessing that preserves detection quality"""
+    h, w = image.shape[:2]
+    
+    # Only resize if image is significantly larger than target
+    if max(h, w) > target_size * 1.5:  # 1.5x threshold prevents over-downscaling
+        scale = target_size / max(h, w)
+        image = cv2.resize(image, (0, 0), 
+                          fx=scale, fy=scale,
+                          interpolation=cv2.INTER_AREA)
+    
+    # Optional: Contrast boost (helps with low-light images)
+    # image = cv2.convertScaleAbs(image, alpha=1.2, beta=0)
+    
+    return image
 
-def get_model() -> YOLO:
-    global _model
-    if _model is None:
-        try:
-            logger.info("Loading optimized YOLO model...")
-            
-            # Force CPU with memory-efficient settings
-            torch.set_flush_denormal(True)  # Reduce memory overhead
-            _model = YOLO('model/best.pt', task='detect')
-            
-            # Optimize model for inference
-            _model.fuse()
-            _model = _model.to('cpu')
-            _model.model.eval()
-            _model.model.float()  # Ensure FP32
-            
-            # Verify configuration
-            device = next(_model.model.parameters()).device
-            mem_usage = torch.cuda.memory_allocated() if torch.cuda.is_available() else 0
-            logger.info(f"Model loaded on {device} | Mem usage: {mem_usage/1e6:.1f}MB")
-            
-        except Exception as e:
-            logger.critical(f"Model init failed: {str(e)}", exc_info=True)
-            raise MemoryError("Failed to load model - insufficient resources")
-            
-    return _model
-
-def detect_objects(image_path: str, max_detections: int = 3) -> List[str]:
-    """Optimized detection with strict memory controls"""
+def detect_objects(image_path, use_preprocessing=True, debug=False):
     try:
-        # Validate input
-        if not os.path.exists(image_path):
+        # Memory check
+        mem = psutil.virtual_memory()
+        if mem.available < 200 * 1024 * 1024:  # 200MB threshold
+            logger.warning(f"Low memory: {mem.available/1024/1024:.1f}MB available")
+        
+        # Load image
+        image = cv2.imread(image_path)
+        if image is None:
+            logger.error(f"Failed to read image: {image_path}")
             return []
-            
-        # Ultra-low-memory image loading
-        img = cv2.imread(image_path, cv2.IMREAD_REDUCED_GRAYSCALE_4)
-        if img is None:
-            return []
-            
-        # Minimal color conversion
-        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-        img = cv2.resize(img, (160, 120))  # Fixed small size
+
+        # Debug: Save original
+        if debug:
+            cv2.imwrite("debug_original.jpg", image)
         
-        # Force memory cleanup
-        gc.collect()
-        if 'torch' in globals():
-            torch.cuda.empty_cache()
+        # Preprocess
+        if use_preprocessing:
+            image = preprocess_image(image)
+            if debug:
+                cv2.imwrite("debug_processed.jpg", image)
         
-        # Strict inference parameters
-        model = get_model()
-        results = model(
-            img,
-            device='cpu',
-            imgsz=160,
-            verbose=False,
-            max_det=max_detections,  # Critical limit
-            conf=0.5,  # Higher confidence threshold
-            iou=0.45  # Standard NMS
-        )
+        # Detection
+        results = model(image)
         
-        # Efficient results processing
-        detected = set()
-        for r in results:
-            for box in r.boxes[:max_detections]:  # Hard limit
-                detected.add(model.names[int(box.cls.item())])
+        # Extract classes
+        detected = [model.names[int(box.cls.item())] for box in results[0].boxes]
         
-        return list(detected)
+        # Debug info
+        if debug:
+            logger.info(f"Detected: {detected}")
+            logger.info(f"Image size: {image.shape}")
+            logger.info(f"Memory used: {psutil.Process().memory_info().rss / 1024 / 1024:.1f}MB")
         
-    except torch.cuda.OutOfMemoryError:
-        logger.error("CUDA OOM despite CPU-only mode")
+        return detected if detected else []
+
+    except Exception as e:
+        logger.error(f"Detection failed: {str(e)}", exc_info=True)
         return []
-    except RuntimeError as e:
-        if 'out of memory' in str(e).lower():
-            logger.error("System out of memory")
-        return []
-    finally:
-        # Aggressive cleanup
-        if 'img' in locals():
-            del img
-        gc.collect()
-        torch.cuda.empty_cache() if torch.cuda.is_available() else None
