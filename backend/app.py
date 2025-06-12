@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
@@ -14,7 +14,7 @@ load_dotenv()
 app = Flask(
     __name__,
     static_folder="../frontend/static",
-    template_folder="../frontend/templates"
+    template_folder="../backend/templates"
 )
 
 # Configure CORS - adjust origins as needed
@@ -23,7 +23,7 @@ CORS(app, origins=["https://simunex.netlify.app", "http://localhost:5000"])
 # Routes
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return send_from_directory('../frontend', 'index.html')
 
 @app.route('/problem<int:problem_id>')
 def problem(problem_id):
