@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template, send_from_directory
+from werkzeug.utils import secure_filename  # Add this import
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import logging
+import psutil  # Add this import for memory usage
 from yolov8_detect import detect_objects
 from llm_suggestions import suggest_projects
 
@@ -19,6 +21,16 @@ app = Flask(
 
 # Configure CORS - adjust origins as needed
 CORS(app, origins=["https://simunex.netlify.app", "http://localhost:5000"])
+
+# Configure upload folder and allowed extensions
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Routes
 @app.route('/')
@@ -58,13 +70,20 @@ def detect_components():
     if 'image' not in request.files:
         return jsonify({"error": "No image uploaded"}), 400
 
-    # Save upload
-    upload_folder = 'uploads'
-    os.makedirs(upload_folder, exist_ok=True)
-    image_path = os.path.join(upload_folder, secure_filename(request.files['image'].filename))
-    request.files['image'].save(image_path)
+    file = request.files['image']
+    
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+        
+    if not allowed_file(file.filename):
+        return jsonify({"error": "Invalid file type"}), 400
 
     try:
+        # Save upload with secure filename
+        filename = secure_filename(file.filename)
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(image_path)
+
         # Run detection (with debug mode for development)
         detected = detect_objects(image_path, debug=True)
         
@@ -83,6 +102,10 @@ def detect_components():
             "memory_used": f"{psutil.Process().memory_info().rss / 1024 / 1024:.1f}MB"
         })
 
+    except Exception as e:
+        logger.error(f"Detection error: {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+        
     finally:
         if os.path.exists(image_path):
             os.remove(image_path)
