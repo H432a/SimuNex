@@ -1,23 +1,27 @@
 from ultralytics import YOLO
 import cv2
 
-# Load YOLO model (Make sure the path is correct)
 model = YOLO('model/best.pt')
 
 def detect_objects(image_path):
-    image = cv2.imread(image_path)
-
-    # Ensure the image is loaded properly
-    if image is None:
-        print(f"Error: Unable to read image at {image_path}")
+    try:
+        # Efficient image loading
+        img = cv2.imread(image_path)
+        if img is None:
+            raise ValueError("Failed to read image")
+            
+        results = model(img)
+        return list({model.names[int(box.cls[0])] for box in results[0].boxes})
+    except Exception as e:
+        print(f"Detection error: {e}")
         return []
 
-    results = model(image)  # Alternative to model.predict(source=image)
+    results = model(image) 
 
     detected_objects = set()
     for result in results:
         for box in result.boxes:
-            class_id = int(box.cls.item())  # .item() ensures conversion to int
+            class_id = int(box.cls.item()) 
             class_name = model.names[class_id]
             detected_objects.add(class_name)
     

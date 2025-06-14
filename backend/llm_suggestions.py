@@ -1,6 +1,7 @@
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import os
+import gc
 
 load_dotenv()  
 
@@ -11,10 +12,15 @@ llm = ChatGroq(
     model="llama3-70b-8192"  
 )
 
-def suggest_projects(detected_components):
-    if not detected_components:
-        return "⚠️ No components detected."
+# Add at the top
+import gc
 
-    prompt = f"The detected components are {', '.join(detected_components)}. Suggest innovative electronics or IoT projects using these components. Include 3 project ideas with short descriptions."
-    response = llm.invoke(prompt)
-    return response.content.strip()
+def suggest_projects(components):
+    try:
+        prompt = f"Suggest 2-3 IoT projects using: {', '.join(components)}. Keep responses under 200 words."
+        response = llm.invoke(prompt).content
+        gc.collect()  # Clean up LLM memory
+        return response
+    except Exception as e:
+        gc.collect()
+        return f"Could not generate suggestions: {str(e)}"

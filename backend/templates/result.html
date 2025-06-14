@@ -152,10 +152,11 @@
 <body>
     <h2>Detected Components (Hover/Click to learn more):</h2>
     <ul>
-        {% for comp in components %}
-        <li class="component-item" onclick="explainComponent('{{ comp }}')" onmouseover="showPreview('{{ comp }}')">
-            {{ comp }}</li>
-        {% endfor %}
+{% for component in components %}
+<div class="component">
+    {{ component.name }} <span class="confidence">{{ component.confidence }}%</span>
+</div>
+{% endfor %}
     </ul>
 
     <p id="component-preview"></p>
