@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/css/front.css">
     <style>
         body {
-            background: url("static/bg.jpg") no-repeat center center fixed;
+            background: url("/static/bg.jpg") no-repeat center center fixed;
             background-size: cover;
         }
     </style>
@@ -20,8 +20,8 @@
         <header class="glass-header">
             <h1 class="site-title">SimuNex - Your AI-Powered IoT Simulation Platform</h1>
             <nav class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="https://simunex.onrender.com/about" class="nav-link">About</a>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
             </nav>
         </header>
 
@@ -31,9 +31,9 @@
             <p class="subtitle">Select an option below to get started:</p>
 
             <div class="button-container">
-                <a href="https://simunex.onrender.com/upload"><button>Build Project</button></a>
-                <a href="https://simunex.onrender.com/challenge"><button>Hardware Challenges</button></a>
-                <a href="https://simunex.onrender.com/lab"><button>Lab Exam Prep</button></a>
+                <a href="/upload"><button>Build Project</button></a>
+                <a href="/challenge"><button>Hardware Challenges</button></a>
+                <a href="/lab"><button>Lab Exam Prep</button></a>
             </div>
         </div>
 
@@ -42,6 +42,29 @@
             <p>© 2025 Learning Engagement Platform. All rights reserved.</p>
         </footer>
     </div>
+
+    <script>
+        // Detect if running locally and modify paths if needed
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+            console.log("Running in local development mode");
+            
+            // Update all links to ensure they point to localhost
+            document.querySelectorAll('a[href^="https://simunex.onrender.com"]').forEach(link => {
+                link.href = link.href.replace('https://simunex.onrender.com', '');
+            });
+            
+            // Update CSS and image paths if needed
+            const style = document.querySelector('link[href^="/static/css/front.css"]');
+            if (style) {
+                style.href = "/static/css/front.css";
+            }
+            
+            const bg = document.querySelector('style');
+            if (bg) {
+                bg.innerHTML = bg.innerHTML.replace('url("static/bg.jpg")', 'url("/static/bg.jpg")');
+            }
+        }
+    </script>
 </body>
 
 </html>

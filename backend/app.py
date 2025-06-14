@@ -1,28 +1,33 @@
 from flask import Flask, request, jsonify, render_template, send_from_directory
-from werkzeug.utils import secure_filename  # Add this import
+from werkzeug.utils import secure_filename  
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import logging
-import psutil  # Add this import for memory usage
+import psutil 
 from yolov8_detect import detect_objects
-from llm_suggestions import suggest_projects
+from llm_suggestions import suggest_projects,llm
+import sys
+import platform
+import time
+from ultralytics import YOLO
+from groq import Groq
 
 # Initialize logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 load_dotenv()
 
+model = YOLO('model/best.pt')
 app = Flask(
     __name__,
     static_folder="../frontend/static",
     template_folder="../backend/templates"
 )
 
-# Configure CORS - adjust origins as needed
 CORS(app, origins=["https://simunex.netlify.app", "http://localhost:5000"])
 
-# Configure upload folder and allowed extensions
+
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -67,48 +72,76 @@ def challenge():
 
 @app.route('/detect', methods=['POST'])
 def detect_components():
+    # Check if file was uploaded
     if 'image' not in request.files:
         return jsonify({"error": "No image uploaded"}), 400
 
-    file = request.files['image']
+    image = request.files['image']
     
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
-        
-    if not allowed_file(file.filename):
-        return jsonify({"error": "Invalid file type"}), 400
+    # Check if file is selected
+    if image.filename == '':
+        return jsonify({"error": "No file selected"}), 400
+
+    # Create uploads directory if it doesn't exist
+    upload_folder = 'uploads'
+    os.makedirs(upload_folder, exist_ok=True)
+    
+    # Secure the filename and save
+    try:
+        filename = secure_filename(image.filename)
+        image_path = os.path.join(upload_folder, filename)
+        image.save(image_path)
+    except Exception as e:
+        return jsonify({"error": f"Failed to save image: {str(e)}"}), 500
 
     try:
-        # Save upload with secure filename
-        filename = secure_filename(file.filename)
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(image_path)
+        # Run detection with confidence threshold
+        results = model(image_path, conf=0.4)
+        
+        # Extract unique component names
+        detected_components = set()
+        for result in results:
+            for box in result.boxes:
+                class_id = int(box.cls[0])
+                detected_components.add(model.names[class_id])
 
-        # Run detection (with debug mode for development)
-        detected = detect_objects(image_path, debug=True)
+        detected_components = list(detected_components)
         
-        if not detected:
-            return jsonify({
-                "error": "No components detected",
-                "debug_tip": "1. Check debug_original.jpg and debug_processed.jpg 2. Try closer/more contrasted shots"
-            }), 400
-        
-        # Generate suggestions
-        suggestions = suggest_projects(detected)
-        
-        return jsonify({
-            "components": detected,
-            "suggestions": suggestions,
-            "memory_used": f"{psutil.Process().memory_info().rss / 1024 / 1024:.1f}MB"
-        })
+        # Generate suggestions if components found
+        if not detected_components:
+            suggestions = "No components detected. Try a clearer image with better lighting."
+        else:
+            prompt = f"Suggest 3 simple IoT projects using these components: {', '.join(detected_components)}"
+            try:
+                suggestions = llm.invoke(prompt).content
+            except Exception as e:
+                suggestions = f"Could not generate suggestions: {str(e)}"
+                logger.error(f"LLM error: {str(e)}")
+
+        # Clean up the uploaded file
+        try:
+            os.remove(image_path)
+        except Exception as e:
+            logger.warning(f"Could not delete temporary file: {str(e)}")
+
+        # Return results to template
+        return render_template(
+            'result.html',
+            components=detected_components,
+            suggestions=suggestions
+        )
 
     except Exception as e:
-        logger.error(f"Detection error: {str(e)}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
-        
-    finally:
+        # Clean up file if error occurs
         if os.path.exists(image_path):
-            os.remove(image_path)
+            try:
+                os.remove(image_path)
+            except Exception:
+                pass
+                
+        logger.error(f"Detection error: {str(e)}")
+        return jsonify({"error": f"Detection failed: {str(e)}"}), 500
+
 
 @app.route('/ask_llm', methods=['POST'])
 def ask_llm():
@@ -136,6 +169,12 @@ def ask_llm():
     except Exception as e:
         logger.error(f"LLM error: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+
+@app.route('/result')
+def result():
+    # In a real app, you'd typically get this from a database or session
+    # For now, we'll expect the frontend to handle displaying the data
+    return render_template('result.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
