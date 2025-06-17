@@ -31,9 +31,9 @@
             <p class="subtitle">Select an option below to get started:</p>
 
             <div class="button-container">
-                <a href="/upload"><button>Build Project</button></a>
-                <a href="/challenge"><button>Hardware Challenges</button></a>
-                <a href="/lab"><button>Lab Exam Prep</button></a>
+                <a href="#" class="app-link" data-path="/upload"><button>Build Project</button></a>
+                <a href="#" class="app-link" data-path="/challenge"><button>Hardware Challenges</button></a>
+                <a href="#" class="app-link" data-path="/lab"><button>Lab Exam Prep</button></a>
             </div>
         </div>
 
@@ -44,26 +44,35 @@
     </div>
 
     <script>
-        // Detect if running locally and modify paths if needed
-        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-            console.log("Running in local development mode");
+        // Environment detection and URL configuration
+        (function() {
+            const isLocal = window.location.hostname === "localhost" || 
+                          window.location.hostname === "127.0.0.1";
+            const backendBaseUrl = isLocal ? "http://localhost:3000" : "https://simunex.onrender.com";
             
-            // Update all links to ensure they point to localhost
-            document.querySelectorAll('a[href^="https://simunex.onrender.com"]').forEach(link => {
-                link.href = link.href.replace('https://simunex.onrender.com', '');
+            // Update all application links
+            document.querySelectorAll('.app-link').forEach(link => {
+                const path = link.getAttribute('data-path');
+                link.href = backendBaseUrl + path;
             });
             
-            // Update CSS and image paths if needed
-            const style = document.querySelector('link[href^="/static/css/front.css"]');
-            if (style) {
-                style.href = "/static/css/front.css";
+            // Update static assets for local development
+            if (isLocal) {
+                console.log("Running in local development mode");
+                
+                // Update CSS path
+                const style = document.querySelector('link[href^="/static/css/front.css"]');
+                if (style) {
+                    style.href = "/static/css/front.css";
+                }
+                
+                // Update background image path
+                const bg = document.querySelector('style');
+                if (bg) {
+                    bg.innerHTML = bg.innerHTML.replace('url("/static/bg.jpg")', 'url("/static/bg.jpg")');
+                }
             }
-            
-            const bg = document.querySelector('style');
-            if (bg) {
-                bg.innerHTML = bg.innerHTML.replace('url("static/bg.jpg")', 'url("/static/bg.jpg")');
-            }
-        }
+        })();
     </script>
 </body>
 
